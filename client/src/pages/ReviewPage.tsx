@@ -7,17 +7,7 @@ import { useReviewStore } from '@/store/reviewStore'
 import { useAuthStore } from '@/store/authStore'
 import api from '@/api/axiosInstance'
 
-const DEFAULT_CODE = `// Paste your code below and click "Review Code"
-function fetchUserData(userId) {
-  // This code has some issues — try reviewing it!
-  const query = "SELECT * FROM users WHERE id = " + userId;
-  var result = db.execute(query);
-
-  if (result) {
-    console.log("User found: " + result.password);
-    return result;
-  }
-}
+const DEFAULT_CODE = `// Paste your code here and click "Review Code"
 `
 
 export default function ReviewPage() {

@@ -50,27 +50,27 @@ export default function CodeEditor({ value, onChange, language, onLanguageChange
 
   return (
     <div className="flex flex-col h-full">
-      {/* Language Selector */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.06] bg-brand-navy3">
+      {/* Language Selector — dark strip matching Monaco editor */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#3a3631] bg-[#252220]">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Language</span>
+          <span className="text-xs font-medium text-[#9d9890] uppercase tracking-wider">Language</span>
           <select
             value={language}
             onChange={(e) => onLanguageChange(e.target.value)}
-            className="bg-white/5 border border-white/10 text-slate-200 text-sm rounded-lg px-3 py-1.5
-                       focus:outline-none focus:ring-2 focus:ring-brand-cyan/40 focus:border-brand-cyan/40
-                       cursor-pointer transition-colors hover:bg-white/10"
+            className="bg-[#1e1b18] border border-[#3a3631] text-[#e8e3dc] text-sm rounded-md px-3 py-1
+                       focus:outline-none focus:ring-1 focus:ring-[#c96442] focus:border-[#c96442]
+                       cursor-pointer transition-colors hover:border-[#5a5550]"
           >
             {LANGUAGES.map((l) => (
-              <option key={l.value} value={l.value} className="bg-brand-navy3">
+              <option key={l.value} value={l.value} style={{ background: '#1e1b18', color: '#e8e3dc' }}>
                 {l.label}
               </option>
             ))}
           </select>
         </div>
         {issueLines.length > 0 && (
-          <span className="text-xs text-orange-400 font-medium">
-            {issueLines.length} issue{issueLines.length !== 1 ? 's' : ''} found
+          <span className="text-xs text-[#c96442] font-medium">
+            {issueLines.length} issue{issueLines.length !== 1 ? 's' : ''} flagged
           </span>
         )}
       </div>

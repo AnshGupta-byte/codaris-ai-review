@@ -26,7 +26,8 @@ Analyze the provided ${language} code and respond ONLY with a valid JSON object 
       "severity": "<critical|warning|info|suggestion>",
       "category": "<security|performance|style|logic|maintainability>",
       "message": "<clear description of the problem>",
-      "suggestion": "<specific, actionable fix>"
+      "suggestion": "<specific, actionable fix in plain English>",
+      "fix": "<the corrected code snippet that should replace the problematic code, or null if not applicable>"
     }
   ],
   "positives": ["<strength 1>", "<strength 2>"],
@@ -52,6 +53,8 @@ Score guide:
 - 50-69: acceptable but needs work
 - 30-49: significant issues present
 - 0-29: major problems, not production-ready
+
+For the "fix" field: provide a concise corrected code snippet (1-5 lines) showing exactly what the problematic code should be replaced with. Use null if a code fix is not applicable (e.g., for documentation suggestions).
 
 Be specific, actionable, and constructive. Always output valid JSON.`;
 

@@ -1,50 +1,66 @@
 interface ScoreRingProps {
   score: number
   size?: number
+  strokeWidth?: number
 }
 
-function getScoreColor(score: number) {
-  if (score >= 80) return { stroke: '#34d399', text: 'text-emerald-400', label: 'Excellent' }
-  if (score >= 60) return { stroke: '#00e5ff', text: 'text-brand-cyan', label: 'Good' }
-  if (score >= 40) return { stroke: '#fb923c', text: 'text-orange-400', label: 'Fair' }
-  return { stroke: '#f87171', text: 'text-red-400', label: 'Poor' }
+function getColor(score: number) {
+  if (score >= 80) return '#16a34a'   // green
+  if (score >= 60) return '#d97706'   // amber
+  if (score >= 40) return '#ea580c'   // orange
+  return '#dc2626'                    // red
 }
 
-export default function ScoreRing({ score, size = 120 }: ScoreRingProps) {
-  const radius = (size - 16) / 2
-  const circumference = 2 * Math.PI * radius
-  const clampedScore = Math.min(100, Math.max(0, score))
-  const strokeDashoffset = circumference - (clampedScore / 100) * circumference
-  const { stroke, text, label } = getScoreColor(clampedScore)
+function getLabel(score: number) {
+  if (score >= 80) return 'Excellent'
+  if (score >= 60) return 'Good'
+  if (score >= 40) return 'Fair'
+  return 'Poor'
+}
+
+export default function ScoreRing({ score, size = 80, strokeWidth = 8 }: ScoreRingProps) {
+  const r     = (size - strokeWidth) / 2
+  const circ  = 2 * Math.PI * r
+  const filled = circ * (Math.min(100, Math.max(0, score)) / 100)
+  const gap   = circ - filled
+  const color = getColor(score)
+  const label = getLabel(score)
 
   return (
-    <div className="flex flex-col items-center gap-1">
-      <svg width={size} height={size} className="-rotate-90">
-        {/* Background track */}
+    <div className="flex flex-col items-center gap-1 flex-shrink-0">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+        {/* Track ring */}
         <circle
-          cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8"
+          cx={size / 2} cy={size / 2} r={r}
+          fill="none" stroke="#e8e3dc" strokeWidth={strokeWidth}
         />
         {/* Score arc */}
         <circle
-          cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke={stroke} strokeWidth="8"
+          cx={size / 2} cy={size / 2} r={r}
+          fill="none" stroke={color} strokeWidth={strokeWidth}
           strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)', filter: `drop-shadow(0 0 8px ${stroke}80)` }}
+          strokeDasharray={`${filled} ${gap}`}
+          style={{ transition: 'stroke-dasharray 1s ease' }}
         />
-        {/* Score text (rotate back) */}
+        {/* Score number — counter-rotated so it reads upright */}
         <text
-          x="50%" y="50%"
-          dominantBaseline="middle" textAnchor="middle"
-          fill="white" fontSize="22" fontWeight="800" fontFamily="Outfit, sans-serif"
-          transform={`rotate(90, ${size / 2}, ${size / 2})`}
+          x={size / 2} y={size / 2}
+          textAnchor="middle" dominantBaseline="central"
+          style={{
+            transform:       `rotate(90deg)`,
+            transformOrigin: `${size / 2}px ${size / 2}px`,
+            fontSize:        `${size * 0.26}px`,
+            fontWeight:      700,
+            fill:            '#1c1917',   /* dark — readable on white/light bg */
+            fontFamily:      'Inter, sans-serif',
+          }}
         >
-          {clampedScore}
+          {score}
         </text>
       </svg>
-      <span className={`text-xs font-bold uppercase tracking-wider ${text}`}>{label}</span>
+      <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color }}>
+        {label}
+      </span>
     </div>
   )
 }

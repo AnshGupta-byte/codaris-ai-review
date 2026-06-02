@@ -63,7 +63,7 @@ export default function Navbar() {
             </div>
           ) : (
             <a
-              href="/api/auth/github"
+              href={`${import.meta.env.VITE_API_URL ?? ''}/api/auth/github`}
               className="flex items-center gap-2 btn-primary text-sm py-2 px-4"
             >
               <Github size={16} />

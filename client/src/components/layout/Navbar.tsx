@@ -118,14 +118,12 @@ export default function Navbar() {
                       role="switch"
                       aria-checked={remember}
                       onClick={() => setRemember(r => !r)}
-                      className={`relative flex-shrink-0 w-9 h-5 rounded-full border transition-colors duration-200 ${
-                        remember
-                          ? 'bg-brand-accent border-brand-accent'
-                          : 'bg-brand-surface-2 border-brand-border'
+                      className={`relative flex-shrink-0 w-10 h-[22px] rounded-full transition-colors duration-200 ${
+                        remember ? 'bg-brand-accent' : 'bg-brand-border'
                       }`}
                     >
-                      <span className={`absolute top-[3px] w-3.5 h-3.5 rounded-full bg-white shadow transition-transform duration-200 ${
-                        remember ? 'translate-x-[18px]' : 'translate-x-[3px]'
+                      <span className={`absolute top-[3px] left-[3px] w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                        remember ? 'translate-x-[18px]' : 'translate-x-0'
                       }`} />
                     </button>
                     <div>

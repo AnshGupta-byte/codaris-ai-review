@@ -1,81 +1,94 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* ─── Reset ───────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #1c1917;
-  color: #f5f0e8;
-  min-height: 100vh;
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-brand-bg text-brand-text font-sans antialiased;
+    min-height: 100vh;
+  }
+  ::selection {
+    @apply bg-brand-accent-light text-brand-accent;
+  }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-brand-border-strong rounded-full; }
 }
 
-/* ─── Typography ──────────────────────────────────── */
-.heading-serif { font-family: 'Instrument Serif', Georgia, serif; line-height: 1.12; letter-spacing: -0.02em; }
-.label-upper   { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #9d9890; }
-.section-label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #e07a52; margin-bottom: 0.75rem; }
+@layer components {
 
-/* ─── Buttons ─────────────────────────────────────── */
-.btn-primary {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  background: #e07a52; color: #fff; font-weight: 600; font-size: 0.875rem;
-  padding: 0.6rem 1.25rem; border-radius: 0.5rem; border: 1px solid #e07a52;
-  transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-  cursor: pointer; text-decoration: none; white-space: nowrap;
+  /* ── Buttons ─────────────────────────────────── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-brand-accent text-white text-sm font-medium
+           px-5 py-2.5 rounded-lg
+           transition-all duration-150
+           hover:bg-brand-accent-hover hover:shadow-sm hover:-translate-y-px
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none
+           focus:outline-none focus:ring-2 focus:ring-brand-accent/25;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2
+           border border-brand-border bg-brand-surface text-brand-text text-sm font-medium
+           px-5 py-2.5 rounded-lg
+           transition-all duration-150
+           hover:border-brand-border-strong hover:bg-brand-surface-2 hover:-translate-y-px
+           focus:outline-none focus:ring-2 focus:ring-brand-accent/15;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           text-brand-secondary text-sm font-medium px-3 py-2 rounded-lg
+           transition-colors duration-150
+           hover:bg-brand-surface-2 hover:text-brand-text
+           focus:outline-none;
+  }
+
+  /* ── Cards ───────────────────────────────────── */
+  .card {
+    @apply bg-brand-surface border border-brand-border rounded-xl;
+  }
+
+  .card-hover {
+    @apply card transition-shadow duration-150
+           hover:shadow-sm hover:border-brand-border-strong;
+  }
+
+  /* ── Issue badges ────────────────────────────── */
+  .badge-critical   { @apply bg-red-50    text-red-600    border border-red-100;    }
+  .badge-warning    { @apply bg-amber-50  text-amber-700  border border-amber-100;  }
+  .badge-info       { @apply bg-sky-50    text-sky-700    border border-sky-100;    }
+  .badge-suggestion { @apply bg-emerald-50 text-emerald-700 border border-emerald-100; }
+
+  /* ── Typography helpers ──────────────────────── */
+  .heading-serif {
+    @apply font-serif leading-tight tracking-tight;
+  }
+  .label-upper {
+    @apply text-xs font-semibold tracking-widest uppercase text-brand-accent;
+  }
+  .section-label {
+    @apply label-upper mb-3 block;
+  }
+
+  /* ── Divider ─────────────────────────────────── */
+  .divider {
+    @apply border-t border-brand-border my-6;
+  }
+
+  /* ── Code tag ────────────────────────────────── */
+  .lang-tag {
+    @apply text-xs font-mono bg-brand-surface-2 border border-brand-border
+           text-brand-secondary px-2 py-0.5 rounded capitalize;
+  }
 }
-.btn-primary:hover {
-  background: #c96442; border-color: #c96442;
-  box-shadow: 0 0 20px rgba(224,122,82,0.35);
-  transform: translateY(-1px);
+
+/* Monaco editor host */
+.monaco-editor-container {
+  border-radius: 0;
+  overflow: hidden;
 }
-.btn-primary:active { transform: translateY(0); }
-
-.btn-outline {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  background: transparent; color: #c8c0b8; font-weight: 500; font-size: 0.875rem;
-  padding: 0.6rem 1.25rem; border-radius: 0.5rem; border: 1px solid #3a3631;
-  transition: all 0.18s; cursor: pointer; text-decoration: none; white-space: nowrap;
-}
-.btn-outline:hover { border-color: #504a44; color: #f5f0e8; background: #252220; }
-
-.btn-ghost {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  background: transparent; color: #9d9890; font-weight: 500; font-size: 0.875rem;
-  padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: none;
-  transition: all 0.18s; cursor: pointer; text-decoration: none;
-}
-.btn-ghost:hover { color: #f5f0e8; background: #2e2b28; }
-
-/* ─── Cards ───────────────────────────────────────── */
-.card {
-  background: #252220; border: 1px solid #3a3631;
-  border-radius: 0.875rem;
-}
-.card-hover {
-  background: #252220; border: 1px solid #3a3631;
-  border-radius: 0.875rem;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-}
-.card-hover:hover {
-  border-color: #504a44;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-  transform: translateY(-2px);
-}
-
-/* ─── Severity Badges ─────────────────────────────── */
-.badge-critical   { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.25);  border-radius: 999px; padding: 0.15rem 0.6rem; }
-.badge-warning    { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); border-radius: 999px; padding: 0.15rem 0.6rem; }
-.badge-info       { background: rgba(56,189,248,0.15); color: #7dd3fc; border: 1px solid rgba(56,189,248,0.25); border-radius: 999px; padding: 0.15rem 0.6rem; }
-.badge-suggestion { background: rgba(52,211,153,0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.25); border-radius: 999px; padding: 0.15rem 0.6rem; }
-
-/* ─── Utilities ───────────────────────────────────── */
-.scrollbar-thin  { scrollbar-width: thin; scrollbar-color: #3a3631 transparent; }
-.animate-fade-up { animation: fadeUp 0.45s ease forwards; }
-.animate-fade-in { animation: fadeIn 0.35s ease forwards; }
-
-@keyframes fadeUp  { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
-
-/* ─── Monaco editor fix ───────────────────────────── */
-.monaco-editor-container .monaco-editor { border-radius: 0; }

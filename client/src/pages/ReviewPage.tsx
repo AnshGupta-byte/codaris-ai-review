@@ -42,7 +42,7 @@ export default function ReviewPage() {
 
     try {
       const { data } = await api.post('/review', { code: trimmed, language })
-      setReview({ ...data.review, language })
+      setReview({ ...data, language })
       toast.success('Review complete!')
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Review failed. Check your API keys.'

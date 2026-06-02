@@ -25,7 +25,7 @@ export default function DashboardPage() {
   })
 
   useEffect(() => {
-    if (data?.reviews) setHistory(data.reviews)
+    if (data?.data) setHistory(data.data)
   }, [data, setHistory])
 
   const reviews = reviewHistory

@@ -1,24 +1,23 @@
 <div align="center">
 
-# ⬡ CODARIS AI
-### AI-Powered Code Review System
+# Codaris AI
+### AI-Powered Code Review — Free, Instant, No Credit Card
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-codaris--ai--review.vercel.app-c96442?style=for-the-badge&logo=vercel&logoColor=white)](https://codaris-ai-review.vercel.app)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com/atlas)
 [![Gemini AI](https://img.shields.io/badge/Gemini-2.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com)
-[![License](https://img.shields.io/badge/License-MIT-a855f7?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 <br />
 
 **Paste any code. Get instant AI-powered feedback.**
 
-Security vulnerabilities · Performance issues · Best practices · Quality score — all in seconds.
+Security vulnerabilities · Line-by-line issues · Fix suggestions · Quality score — all in seconds.
 
-<br />
-
-![CODARIS AI Banner](https://img.shields.io/badge/CODARIS-AI_Code_Review-00e5ff?style=for-the-badge&labelColor=05060f)
+[**→ Try it live**](https://codaris-ai-review.vercel.app)
 
 </div>
 
@@ -28,53 +27,64 @@ Security vulnerabilities · Performance issues · Best practices · Quality scor
 
 | Feature | Description |
 |---|---|
-| 🤖 **AI Code Review** | Powered by Google Gemini 2.5 Flash with Groq as fallback |
-| 🖥️ **Monaco Editor** | Full VS Code editor experience in the browser |
-| 📊 **Quality Score** | 0–100 score with animated ring visualization |
-| 🔴 **Severity Badges** | Critical · Warning · Info · Suggestion |
-| 🌐 **15+ Languages** | JS, TS, Python, Java, Go, Rust, C++, PHP, Ruby, Swift & more |
-| 🔒 **Security Analysis** | Detects SQL injection, XSS, auth flaws, and 50+ patterns |
-| 📜 **Review History** | Saved per-user with stats dashboard |
-| 🐙 **GitHub OAuth** | Sign in with GitHub — reviews linked to your account |
-| ⚡ **Guest Mode** | Review code without signing in |
-| 📱 **Responsive** | Works on desktop and mobile |
+| 🤖 **AI Code Review** | Powered by Google Gemini 2.5 Flash with Groq (LLaMA 3.3 70B) as automatic fallback |
+| 🖥️ **Monaco Editor** | Full VS Code editor experience in the browser with syntax highlighting |
+| 📊 **Quality Score** | 0–100 score with animated ring visualization and label (Excellent / Good / Fair / Poor) |
+| 📍 **Line Numbers** | Every issue is pinpointed to the exact line in your code |
+| 💡 **Fix Suggestions** | Each issue includes a plain-English fix and a corrected code snippet to copy |
+| 🔴 **Severity Badges** | Critical · Warning · Info · Suggestion — color-coded and categorised |
+| 🌐 **15+ Languages** | JavaScript, TypeScript, Python, Java, Go, Rust, C++, PHP, Ruby, Swift, Kotlin & more |
+| 🔒 **Security Analysis** | Detects SQL injection, XSS, auth flaws, data exposure, and 50+ vulnerability patterns |
+| 📜 **Review History** | All reviews saved per-user with a stats dashboard (total reviews, avg score, issues caught) |
+| 🐙 **GitHub OAuth** | One-click sign-in with GitHub — reviews linked to your account |
+| 🕒 **Remember Me** | Toggle to stay signed in for 30 days, or session-only (7 days) |
+| ⚡ **Guest Mode** | Review code without signing in — no account required |
+| 📱 **Responsive** | Clean, professional UI that works on desktop and mobile |
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 18** + **TypeScript** — Component-based UI
-- **Vite 6** — Lightning-fast dev server & bundler
-- **Tailwind CSS** — Utility-first styling with custom CODARIS theme
+- **React 18** + **TypeScript** — Type-safe component-based UI
+- **Vite 6** — Lightning-fast dev server & production bundler
+- **Tailwind CSS** — Utility-first styling with custom warm design tokens
 - **Monaco Editor** — VS Code editor component (`@monaco-editor/react`)
-- **Zustand** — Lightweight global state management
-- **TanStack Query** — Server state & caching
-- **React Router v7** — Client-side routing
+- **Zustand** — Lightweight global state (auth + review state)
+- **TanStack Query** — Server state, caching & background refetching
+- **React Router v7** — Client-side routing with protected routes
+- **React Hot Toast** — Elegant toast notifications
+- **Instrument Serif + Inter** — Professional typography (Google Fonts)
 
 ### Backend
 - **Express.js** — REST API server
 - **Mongoose** — MongoDB ODM with schema validation
 - **Passport.js** + **passport-github2** — GitHub OAuth 2.0
-- **JWT** + **HttpOnly Cookies** — Secure authentication
-- **Winston** — Structured logging
-- **Helmet** + **CORS** + **Rate Limiting** — Security middleware
+- **JWT** + **HttpOnly Cookies** — Secure, stateless authentication
+- **Winston** — Structured JSON logging
+- **Helmet** + **CORS** + **Express Rate Limit** — Security hardening
+- **cookie-parser** — Cookie parsing middleware
 
 ### AI / Services
-- **Google Gemini 2.5 Flash** — Primary AI review engine
-- **Groq (LLaMA 3.3 70B)** — Fallback AI provider
+- **Google Gemini 2.5 Flash** — Primary AI review engine (structured JSON output)
+- **Groq (LLaMA 3.3 70B)** — Automatic fallback AI provider
 - **MongoDB Atlas** — Cloud database (free tier)
-- **BullMQ** — Background job queue *(Phase 2)*
+
+### Deployment
+- **Vercel** — Frontend hosting with automatic deploys from GitHub
+- **Render** — Backend hosting with auto-deploy
+- **MongoDB Atlas** — Cloud database
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Local Development)
 
 ### Prerequisites
 - Node.js 18+
 - npm 9+
 - MongoDB Atlas account (free)
-- Gemini API key (free)
+- Gemini API key (free at [aistudio.google.com](https://aistudio.google.com))
+- GitHub OAuth App credentials
 
 ### 1. Clone the repository
 
@@ -89,30 +99,49 @@ cd codaris-ai-review
 npm run install:all
 ```
 
-### 3. Set up environment variables
+### 3. Configure environment variables
 
 ```bash
 cp server/.env.example server/.env
 ```
 
-Open `server/.env` and fill in your keys:
+Edit `server/.env` with your credentials:
 
 ```env
+# Database
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/codaris-ai
-GEMINI_API_KEY=your-gemini-api-key      # aistudio.google.com — FREE
-GROQ_API_KEY=your-groq-api-key          # console.groq.com — FREE
-JWT_SECRET=your-random-secret-string
+
+# AI Providers (both are free)
+GEMINI_API_KEY=your-gemini-api-key
+GROQ_API_KEY=your-groq-api-key
+
+# Auth
+JWT_SECRET=your-long-random-secret
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+GITHUB_CALLBACK_URL=http://localhost:5000/api/auth/github/callback
+
+# URLs
+CLIENT_URL=http://localhost:5173
+NODE_ENV=development
+```
+
+For the frontend, create `client/.env`:
+
+```env
+VITE_API_URL=http://localhost:5000
 ```
 
 ### 4. Get your free API keys
 
-| Key | Link | Cost |
+| Key | Where to get it | Cost |
 |---|---|---|
 | **Gemini API** | [aistudio.google.com](https://aistudio.google.com) | 🆓 Free |
 | **Groq API** | [console.groq.com](https://console.groq.com) | 🆓 Free |
 | **MongoDB Atlas** | [mongodb.com/atlas](https://mongodb.com/atlas) | 🆓 Free 512MB |
+| **GitHub OAuth App** | [github.com/settings/developers](https://github.com/settings/developers) | 🆓 Free |
 
-### 5. Start the development servers
+### 5. Run the development servers
 
 ```bash
 npm run dev
@@ -130,52 +159,61 @@ npm run dev
 
 ```
 codaris-ai-review/
-├── client/                          # Vite + React + TypeScript
-│   └── src/
-│       ├── api/                     # Axios instance & interceptors
-│       ├── components/
-│       │   └── layout/
-│       │       └── Navbar.tsx
-│       ├── features/
-│       │   ├── editor/
-│       │   │   └── CodeEditor.tsx   # Monaco editor component
-│       │   └── review/
-│       │       ├── ReviewPanel.tsx  # AI review results
-│       │       ├── ScoreRing.tsx    # Animated SVG score ring
-│       │       └── IssueBadge.tsx   # Severity badge components
-│       ├── pages/
-│       │   ├── HomePage.tsx         # Landing page
-│       │   ├── ReviewPage.tsx       # Main editor + review split pane
-│       │   ├── DashboardPage.tsx    # Review history & stats
-│       │   └── AuthCallbackPage.tsx # GitHub OAuth callback
-│       └── store/
-│           ├── authStore.ts         # Zustand auth state
-│           └── reviewStore.ts       # Zustand review state
+├── client/                          # Vite + React + TypeScript frontend
+│   ├── public/
+│   ├── src/
+│   │   ├── api/
+│   │   │   └── axiosInstance.ts     # Axios with base URL + credentials
+│   │   ├── components/
+│   │   │   └── layout/
+│   │   │       └── Navbar.tsx       # Top nav with auth + remember me
+│   │   ├── features/
+│   │   │   ├── editor/
+│   │   │   │   └── CodeEditor.tsx   # Monaco editor + language selector
+│   │   │   └── review/
+│   │   │       ├── ReviewPanel.tsx  # Full AI review results panel
+│   │   │       ├── ScoreRing.tsx    # Animated SVG quality score ring
+│   │   │       └── IssueBadge.tsx   # Issue cards with line numbers + fix code
+│   │   ├── pages/
+│   │   │   ├── HomePage.tsx         # Landing page with features + footer
+│   │   │   ├── ReviewPage.tsx       # Editor + review split-pane layout
+│   │   │   ├── DashboardPage.tsx    # Review history + stats
+│   │   │   └── AuthCallbackPage.tsx # GitHub OAuth callback handler
+│   │   ├── store/
+│   │   │   ├── authStore.ts         # Zustand auth state (persisted)
+│   │   │   └── reviewStore.ts       # Zustand review state + history
+│   │   ├── App.tsx                  # Routes + auth initialisation
+│   │   ├── index.css                # Design system (tokens, components)
+│   │   └── vite-env.d.ts            # ImportMeta type declarations
+│   ├── tailwind.config.js           # Custom warm colour palette
+│   ├── vercel.json                  # SPA routing rewrites for Vercel
+│   └── vite.config.ts
 │
-├── server/                          # Express.js API
+├── server/                          # Express.js REST API
 │   ├── config/
 │   │   ├── db.js                    # MongoDB connection
-│   │   ├── logger.js                # Winston logger
+│   │   ├── logger.js                # Winston structured logger
 │   │   └── passport.js              # GitHub OAuth strategy
 │   ├── controllers/
-│   │   ├── reviewController.js      # Review CRUD logic
-│   │   └── authController.js        # Auth logic
+│   │   ├── reviewController.js      # Review CRUD + AI trigger
+│   │   └── authController.js        # Login, callback, logout, me
 │   ├── middleware/
-│   │   ├── auth.js                  # JWT verification
-│   │   ├── rateLimiter.js           # Rate limiting
-│   │   └── errorHandler.js         # Global error handler
+│   │   ├── auth.js                  # JWT verification middleware
+│   │   ├── rateLimiter.js           # Per-IP rate limiting
+│   │   └── errorHandler.js          # Global error handler
 │   ├── models/
-│   │   ├── User.js                  # User schema
+│   │   ├── User.js                  # User schema (GitHub profile)
 │   │   └── Review.js                # Review schema
 │   ├── routes/
-│   │   ├── auth.js                  # /api/auth/*
-│   │   └── review.js                # /api/review/*
+│   │   ├── auth.js                  # /api/auth/* routes
+│   │   └── review.js                # /api/review/* routes
 │   ├── services/
-│   │   └── aiService.js             # Gemini + Groq AI logic
-│   └── index.js                     # Express app entry point
+│   │   └── aiService.js             # Gemini + Groq AI logic + prompt builder
+│   └── index.js                     # Express app, CORS, middleware setup
 │
+├── render.yaml                      # Render backend deployment config
 ├── package.json                     # Root scripts (concurrently)
-└── .env.example                     # Environment template
+└── README.md
 ```
 
 ---
@@ -186,16 +224,16 @@ codaris-ai-review/
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
 | `POST` | `/api/review` | Optional | Submit code for AI review |
-| `GET` | `/api/review` | Required | Get review history |
-| `GET` | `/api/review/:id` | Required | Get specific review |
+| `GET` | `/api/review` | Required | Get paginated review history |
+| `GET` | `/api/review/:id` | Required | Get a specific review |
 
 ### Auth
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/auth/github` | Redirect to GitHub OAuth |
-| `GET` | `/api/auth/github/callback` | OAuth callback |
-| `GET` | `/api/auth/me` | Get current user |
-| `POST` | `/api/auth/logout` | Sign out |
+| `GET` | `/api/auth/github` | Start GitHub OAuth flow (accepts `?remember=1`) |
+| `GET` | `/api/auth/github/callback` | OAuth callback — issues JWT cookie |
+| `GET` | `/api/auth/me` | Get current authenticated user |
+| `POST` | `/api/auth/logout` | Clear JWT cookie and sign out |
 
 ### System
 | Method | Endpoint | Description |
@@ -206,22 +244,39 @@ codaris-ai-review/
 
 ## 🤖 AI Review Response Format
 
+The AI returns structured JSON with full issue details including exact line numbers and fix snippets:
+
 ```json
 {
   "score": 72,
-  "summary": "The code has a critical SQL injection vulnerability...",
+  "summary": "The code has a critical SQL injection vulnerability and leaks sensitive data via console.log. Overall structure is reasonable but needs security hardening.",
   "issues": [
     {
       "line": 4,
       "severity": "critical",
       "category": "security",
-      "message": "SQL injection vulnerability detected",
-      "suggestion": "Use parameterized queries instead of string concatenation"
+      "message": "SQL injection vulnerability — user input is concatenated directly into the query string.",
+      "suggestion": "Use parameterised queries to prevent SQL injection.",
+      "fix": "const query = 'SELECT * FROM users WHERE id = ?';\ndb.execute(query, [userId]);"
+    },
+    {
+      "line": 7,
+      "severity": "warning",
+      "category": "security",
+      "message": "console.log exposes result.password in production logs.",
+      "suggestion": "Remove the console.log or guard it behind a NODE_ENV check.",
+      "fix": "if (process.env.NODE_ENV !== 'production') {\n  console.log('User found:', result.id);\n}"
     }
   ],
-  "positives": ["Good variable naming", "Proper function structure"],
-  "overallSuggestions": ["Add input validation", "Write unit tests"],
-  "aiProvider": "gemini-2.5-flash"
+  "positives": [
+    "Function is well-named and has a single clear responsibility."
+  ],
+  "overallSuggestions": [
+    "Add input validation before the database call.",
+    "Consider returning only the fields your client needs, not the full user row."
+  ],
+  "aiProvider": "gemini-2.5-flash",
+  "tokensUsed": 1248
 }
 ```
 
@@ -229,19 +284,42 @@ codaris-ai-review/
 
 ## 🗺️ Roadmap
 
-- [x] Monaco Editor integration
-- [x] Gemini AI review engine
-- [x] Groq fallback provider
-- [x] Score ring visualization
-- [x] Issue severity badges
-- [x] Review history dashboard
-- [x] Guest mode (no login required)
-- [ ] GitHub OAuth login
-- [ ] BullMQ background job queue
-- [ ] GitHub PR webhook auto-review
-- [ ] Deploy to Vercel + Render
+- [x] Monaco Editor with syntax highlighting and 15+ languages
+- [x] Google Gemini 2.5 Flash AI review engine
+- [x] Groq (LLaMA 3.3 70B) automatic fallback provider
+- [x] Quality score ring with colour-coded labels
+- [x] Issue severity badges (Critical · Warning · Info · Suggestion)
+- [x] Line-number pinpointing for every issue
+- [x] Fix code snippets — exact replacement code per issue
+- [x] Review history dashboard with stats
+- [x] Guest mode — no login required
+- [x] GitHub OAuth login
+- [x] Remember Me — 30-day or 7-day session toggle
+- [x] JWT in HttpOnly cookies — secure, stateless auth
+- [x] Deployed to Vercel (frontend) + Render (backend)
+- [x] Professional Claude-inspired design — warm palette, Instrument Serif
+- [ ] Solve with AI — describe a problem, get working code back
 - [ ] Review diff highlighting in editor
+- [ ] GitHub PR webhook auto-review
 - [ ] Export review as PDF
+
+---
+
+## ☁️ Deployment
+
+### Frontend — Vercel
+1. Import the GitHub repo on [vercel.com](https://vercel.com)
+2. Set **Root Directory** to `client`
+3. Add environment variable: `VITE_API_URL=https://your-render-url.onrender.com`
+4. Deploy — auto-redeploys on every push to `main`
+
+### Backend — Render
+1. Create a new **Web Service** on [render.com](https://render.com)
+2. Set **Root Directory** to `server`
+3. **Build Command**: `npm install`
+4. **Start Command**: `node index.js`
+5. Add all environment variables from `server/.env.example`
+6. Set MongoDB Atlas network access to `0.0.0.0/0` (Render uses dynamic IPs)
 
 ---
 
@@ -267,8 +345,12 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-Built with ❤️ by **[Ansh Gupta](https://github.com/AnshGupta-byte)**
+Built by **[Ansh Kumar Gupta](https://www.linkedin.com/in/anshkrgupta/)**
 
-⭐ **Star this repo** if you found it helpful!
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-anshkrgupta-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/anshkrgupta/)
+[![GitHub](https://img.shields.io/badge/GitHub-AnshGupta--byte-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/AnshGupta-byte)
+[![Email](https://img.shields.io/badge/Email-anshg397@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:anshg397@gmail.com)
+
+⭐ **Star this repo** if you found it useful!
 
 </div>

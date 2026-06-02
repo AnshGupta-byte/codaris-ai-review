@@ -12,7 +12,7 @@ function fetchUserData(userId) {
   // This code has some issues — try reviewing it!
   const query = "SELECT * FROM users WHERE id = " + userId;
   var result = db.execute(query);
-  
+
   if (result) {
     console.log("User found: " + result.password);
     return result;
@@ -29,71 +29,73 @@ export default function ReviewPage() {
   const handleReview = async () => {
     const trimmed = code.trim()
     if (!trimmed || trimmed === DEFAULT_CODE.trim()) {
-      toast.error('Please paste your code first')
+      toast.error('Please paste your own code first')
       return
     }
     if (trimmed.length < 10) {
       toast.error('Code is too short to review')
       return
     }
-
     setReviewing(true)
     setReview(null)
-
     try {
       const { data } = await api.post('/review', { code: trimmed, language })
       setReview({ ...data, language })
-      toast.success('Review complete!')
+      toast.success('Review complete')
     } catch (err: any) {
-      const msg = err.response?.data?.message || 'Review failed. Check your API keys.'
-      toast.error(msg)
+      toast.error(err.response?.data?.message || 'Review failed. Please try again.')
     } finally {
       setReviewing(false)
     }
   }
 
   const issueLines = currentReview?.issues.map(i => i.line).filter(Boolean) as number[] || []
+  const BASE = import.meta.env.VITE_API_URL ?? ''
 
   return (
-    <div className="flex flex-col h-screen pt-16">
-      {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.06] bg-brand-navy2 flex-shrink-0">
+    <div className="flex flex-col h-screen pt-14">
+
+      {/* ── Toolbar ──────────────────────────────── */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-brand-border bg-brand-surface flex-shrink-0">
         <div className="flex items-center gap-3">
-          <h1 className="font-bold text-sm sm:text-base">
-            Code <span className="gradient-text">Review</span>
-          </h1>
+          <span className="text-sm font-semibold text-brand-text">Code Review</span>
           {!isAuthenticated && (
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 bg-white/5 border border-white/10 rounded-lg px-2.5 py-1">
+            <span className="hidden sm:flex items-center gap-1 text-xs text-brand-muted border border-brand-border rounded-md px-2 py-1">
               <AlertCircle size={11} />
-              <span>Sign in to save history</span>
-            </div>
+              Sign in to save history
+            </span>
           )}
         </div>
 
         <div className="flex items-center gap-2">
           {!isAuthenticated && (
-            <a href="/api/auth/github" className="hidden sm:flex items-center gap-1.5 btn-ghost text-xs py-1.5 px-3">
-              <Github size={13} /> Sign in
+            <a
+              href={`${BASE}/api/auth/github`}
+              className="hidden sm:flex btn-outline py-1.5 px-3 text-xs"
+            >
+              <Github size={13} />
+              Sign in
             </a>
           )}
           <button
             onClick={handleReview}
             disabled={isReviewing}
-            className="btn-primary flex items-center gap-2 text-sm py-2 px-4"
+            className="btn-primary py-1.5 px-4 text-sm"
           >
             {isReviewing ? (
-              <><Loader2 size={15} className="animate-spin" /> Reviewing...</>
+              <><Loader2 size={14} className="animate-spin" /> Reviewing…</>
             ) : (
-              <><Sparkles size={15} /> Review Code</>
+              <><Sparkles size={14} /> Review Code</>
             )}
           </button>
         </div>
       </div>
 
-      {/* Main Split Pane */}
+      {/* ── Split pane ───────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Editor Pane */}
-        <div className="flex-1 flex flex-col border-r border-white/[0.06] min-w-0">
+
+        {/* Editor */}
+        <div className="flex-1 flex flex-col border-r border-brand-border min-w-0">
           <CodeEditor
             value={code}
             onChange={setCode}
@@ -103,31 +105,32 @@ export default function ReviewPage() {
           />
         </div>
 
-        {/* Review Pane */}
-        <div className="w-full sm:w-[420px] lg:w-[480px] flex flex-col bg-brand-navy2 flex-shrink-0 overflow-hidden">
+        {/* Review panel */}
+        <div className="w-full sm:w-[420px] lg:w-[460px] flex flex-col bg-brand-surface flex-shrink-0 overflow-hidden">
           {isReviewing ? (
-            <div className="flex flex-col items-center justify-center h-full gap-4 text-slate-400">
-              <div className="relative">
-                <div className="w-16 h-16 rounded-full border-2 border-brand-purple/30 border-t-brand-cyan animate-spin" />
-                <Sparkles size={20} className="absolute inset-0 m-auto text-brand-cyan" />
+            <div className="flex flex-col items-center justify-center h-full gap-4 text-brand-secondary">
+              <div className="relative w-12 h-12">
+                <div className="absolute inset-0 rounded-full border-2 border-brand-border border-t-brand-accent animate-spin" />
+                <Sparkles size={16} className="absolute inset-0 m-auto text-brand-accent" />
               </div>
               <div className="text-center">
-                <p className="font-semibold text-slate-300">Analyzing your code...</p>
-                <p className="text-sm text-slate-500 mt-1">Gemini AI is reviewing</p>
+                <p className="text-sm font-semibold text-brand-text">Analysing your code…</p>
+                <p className="text-xs text-brand-muted mt-1">Powered by Gemini AI</p>
               </div>
             </div>
           ) : currentReview ? (
             <ReviewPanel review={currentReview} />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8 text-slate-500">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-cyan/10 to-brand-purple/10 border border-white/[0.06] flex items-center justify-center">
-                <Sparkles size={28} className="text-brand-purple/60" />
+            <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-8 text-brand-muted">
+              <div className="w-12 h-12 rounded-xl border border-brand-border bg-brand-surface-2
+                              flex items-center justify-center">
+                <Sparkles size={22} className="text-brand-muted" />
               </div>
               <div>
-                <p className="font-semibold text-slate-400">Ready to Review</p>
-                <p className="text-sm mt-1 leading-relaxed">
-                  Paste your code on the left and click<br />
-                  <span className="text-brand-cyan font-medium">Review Code</span> to get AI feedback
+                <p className="text-sm font-semibold text-brand-secondary">Ready to review</p>
+                <p className="text-xs mt-1 leading-relaxed">
+                  Paste your code on the left, then click{' '}
+                  <span className="text-brand-accent font-medium">Review Code</span>.
                 </p>
               </div>
             </div>

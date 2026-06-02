@@ -1,32 +1,40 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         brand: {
-          cyan: '#00e5ff',
-          purple: '#a855f7',
-          pink: '#ec4899',
-          navy: '#05060f',
-          navy2: '#0b0d1a',
-          navy3: '#111327',
+          bg:            '#faf9f7',
+          surface:       '#ffffff',
+          'surface-2':   '#f5f2ee',
+          border:        '#e8e3dc',
+          'border-strong':'#ccc5bb',
+          text:          '#1c1917',
+          secondary:     '#78716c',
+          muted:         '#a8a29e',
+          accent:        '#c96442',
+          'accent-hover':'#a8502f',
+          'accent-light':'#fef3ee',
+          'accent-border':'#fcd9c8',
+          code:          '#1e1b18',
         },
       },
       fontFamily: {
-        sans: ['Outfit', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans:  ['Inter', 'sans-serif'],
+        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+        mono:  ['"JetBrains Mono"', 'monospace'],
       },
       animation: {
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'spin-slow': 'spin 3s linear infinite',
-        'fade-up': 'fadeUp 0.5s ease forwards',
+        'fade-in':  'fadeIn 0.35s ease forwards',
+        'fade-up':  'fadeUp 0.45s ease forwards',
+        'spin-slow':'spin 2.5s linear infinite',
       },
       keyframes: {
+        fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
         fadeUp: {
-          from: { opacity: '0', transform: 'translateY(16px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
+          from: { opacity: '0', transform: 'translateY(10px)' },
+          to:   { opacity: '1', transform: 'translateY(0)' },
         },
       },
     },

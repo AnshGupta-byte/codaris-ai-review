@@ -29,7 +29,7 @@ export default function App() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-brand-navy">
+    <div className="min-h-screen bg-brand-bg">
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />

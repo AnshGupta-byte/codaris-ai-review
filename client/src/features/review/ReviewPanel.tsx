@@ -12,25 +12,23 @@ export default function ReviewPanel({ review }: { review: ReviewResult }) {
   }
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-brand-surface">
+    <div className="flex flex-col h-full overflow-y-auto bg-brand-bg scrollbar-thin">
 
-      {/* ── Score header ─────────────────────────── */}
+      {/* ── Score header ─────────────── */}
       <div className="px-5 pt-5 pb-4 border-b border-brand-border">
         <div className="flex items-center gap-4">
           <ScoreRing score={review.score} size={90} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-2">
               <Sparkles size={13} className="text-brand-accent" />
-              <span className="text-xs font-semibold text-brand-accent uppercase tracking-wider">
-                AI Review
-              </span>
+              <span className="text-xs font-semibold text-brand-accent uppercase tracking-wider">AI Review</span>
               <span className="text-xs text-brand-muted">· {review.aiProvider}</span>
             </div>
-            <p className="text-sm text-brand-text leading-relaxed">{review.summary}</p>
+            <p className="text-sm text-brand-secondary leading-relaxed">{review.summary}</p>
           </div>
         </div>
 
-        {/* Severity summary row */}
+        {/* Severity counts */}
         <div className="grid grid-cols-4 gap-2 mt-4 pt-4 border-t border-brand-border">
           {(['critical','warning','info','suggestion'] as const).map(sev => (
             <div key={sev} className="text-center">
@@ -41,7 +39,7 @@ export default function ReviewPanel({ review }: { review: ReviewResult }) {
         </div>
       </div>
 
-      {/* ── Issues list ──────────────────────────── */}
+      {/* ── Issues ───────────────────── */}
       {review.issues.length > 0 && (
         <div className="px-4 py-4 border-b border-brand-border">
           <h3 className="text-xs font-semibold text-brand-muted uppercase tracking-widest mb-3">
@@ -55,40 +53,35 @@ export default function ReviewPanel({ review }: { review: ReviewResult }) {
         </div>
       )}
 
-      {/* ── What's good ──────────────────────────── */}
+      {/* ── What's good ──────────────── */}
       {review.positives.length > 0 && (
         <div className="px-4 py-4 border-b border-brand-border">
-          <h3 className="text-xs font-semibold text-brand-muted uppercase tracking-widest mb-3">
-            What's good
-          </h3>
+          <h3 className="text-xs font-semibold text-brand-muted uppercase tracking-widest mb-3">What's good</h3>
           <div className="space-y-2">
             {review.positives.map((p, i) => (
               <div key={i} className="flex items-start gap-2.5">
-                <CheckCircle size={14} className="text-emerald-600 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-brand-text leading-relaxed">{p}</span>
+                <CheckCircle size={14} className="text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span className="text-sm text-brand-secondary leading-relaxed">{p}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* ── Recommendations ──────────────────────── */}
+      {/* ── Recommendations ──────────── */}
       {review.overallSuggestions.length > 0 && (
         <div className="px-4 py-4">
-          <h3 className="text-xs font-semibold text-brand-muted uppercase tracking-widest mb-3">
-            Recommendations
-          </h3>
+          <h3 className="text-xs font-semibold text-brand-muted uppercase tracking-widest mb-3">Recommendations</h3>
           <div className="space-y-2">
             {review.overallSuggestions.map((s, i) => (
               <div key={i} className="flex items-start gap-2.5">
-                <Lightbulb size={14} className="text-amber-500 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-brand-text leading-relaxed">{s}</span>
+                <Lightbulb size={14} className="text-brand-accent mt-0.5 flex-shrink-0" />
+                <span className="text-sm text-brand-secondary leading-relaxed">{s}</span>
               </div>
             ))}
           </div>
         </div>
       )}
-
     </div>
   )
 }

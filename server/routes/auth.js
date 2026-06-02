@@ -8,16 +8,23 @@ const router = express.Router();
 /**
  * GET /api/auth/github
  * Initiates the GitHub OAuth2 flow.
+ * Accepts ?remember=1 to set a 30-day session instead of 7-day.
  */
-router.get(
-  '/github',
-  passport.authenticate('github', { scope: ['user:email'], session: false }),
-);
+router.get('/github', (req, res, next) => {
+  // Store remember preference in a short-lived cookie that survives the OAuth redirect
+  const remember = req.query.remember === '1';
+  res.cookie('_c_remember', remember ? '1' : '0', {
+    httpOnly: true,
+    maxAge: 10 * 60 * 1000, // 10 minutes — just enough for the OAuth flow
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
+  passport.authenticate('github', { scope: ['user:email'], session: false })(req, res, next);
+});
 
 /**
  * GET /api/auth/github/callback
  * GitHub redirects here after the user authorizes (or denies) the app.
- * On failure, redirect to the client with an error flag.
  */
 router.get(
   '/github/callback',

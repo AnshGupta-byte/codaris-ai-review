@@ -183,15 +183,93 @@ export default function HomePage() {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────── */}
-      <footer className="border-t border-brand-border py-8 px-5">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-brand-muted">
-          <span>© 2026 Codaris AI. Free, open-source code review.</span>
-          <div className="flex items-center gap-4">
-            <a href="https://github.com/AnshGupta-byte/codaris-ai-review" target="_blank" rel="noopener noreferrer"
-               className="hover:text-brand-text transition-colors flex items-center gap-1">
-              <Github size={13} /> GitHub
-            </a>
-            <Link to="/review" className="hover:text-brand-text transition-colors">Review</Link>
+      <footer className="border-t border-brand-border bg-brand-surface-2">
+        <div className="max-w-5xl mx-auto px-5 py-10">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-8">
+
+            {/* Left — branding */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-md bg-brand-accent flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">C</span>
+                </div>
+                <span className="font-semibold text-brand-text text-sm">Codaris AI</span>
+              </div>
+              <p className="text-xs text-brand-muted leading-relaxed max-w-xs">
+                Free AI-powered code review. Instant feedback on security,
+                performance, and code quality.
+              </p>
+            </div>
+
+            {/* Right — creator + links */}
+            <div className="flex flex-col sm:items-end gap-3">
+              <p className="text-xs text-brand-muted">
+                Built by{' '}
+                <a
+                  href="https://www.linkedin.com/in/anshkrgupta/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-brand-text hover:text-brand-accent transition-colors"
+                >
+                  Ansh Kumar Gupta
+                </a>
+              </p>
+
+              {/* Social / contact links */}
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://www.linkedin.com/in/anshkrgupta/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="LinkedIn"
+                  className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-accent transition-colors"
+                >
+                  {/* LinkedIn icon */}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                    <rect x="2" y="9" width="4" height="12"/>
+                    <circle cx="4" cy="4" r="2"/>
+                  </svg>
+                  LinkedIn
+                </a>
+
+                <span className="text-brand-border">·</span>
+
+                <a
+                  href="https://github.com/AnshGupta-byte"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="GitHub"
+                  className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-accent transition-colors"
+                >
+                  <Github size={13} />
+                  GitHub
+                </a>
+
+                <span className="text-brand-border">·</span>
+
+                <a
+                  href="mailto:anshg397@gmail.com"
+                  title="Send feedback"
+                  className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-accent transition-colors"
+                >
+                  {/* Mail icon */}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                  </svg>
+                  Feedback
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-brand-border mt-8 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-brand-muted">
+            <span>© 2026 Codaris AI · Free & open source</span>
+            <Link to="/review" className="hover:text-brand-text transition-colors">
+              Start reviewing →
+            </Link>
           </div>
         </div>
       </footer>

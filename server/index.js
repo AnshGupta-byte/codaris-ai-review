@@ -108,6 +108,25 @@ async function start() {
     app.listen(PORT, () => {
       logger.info(`🚀 CODARIS server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
       logger.info(`📡 Accepting requests from: ${CLIENT_URL}`);
+
+      // ── Keep-alive ping (Render free tier sleeps after 15 min) ──
+      // Pings own health endpoint every 10 minutes to stay warm.
+      if (process.env.NODE_ENV === 'production') {
+        const selfUrl = process.env.RENDER_EXTERNAL_URL || process.env.SERVER_URL;
+        if (selfUrl) {
+          setInterval(async () => {
+            try {
+              const res = await fetch(`${selfUrl}/api/health`);
+              logger.info(`[keepalive] ping → ${res.status}`);
+            } catch (err) {
+              logger.warn(`[keepalive] ping failed: ${err.message}`);
+            }
+          }, 10 * 60 * 1000); // every 10 minutes
+          logger.info(`[keepalive] Self-ping enabled → ${selfUrl}/api/health`);
+        } else {
+          logger.warn('[keepalive] RENDER_EXTERNAL_URL not set — add it in Render env vars to enable keep-alive');
+        }
+      }
     });
   } catch (err) {
     logger.error(`Failed to start server: ${err.message}`);

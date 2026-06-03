@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Code2, Github, LogOut, ChevronDown, LayoutDashboard } from 'lucide-react'
+import { Code2, Github, LogOut, ChevronDown, LayoutDashboard, Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import api from '@/api/axiosInstance'
 import toast from 'react-hot-toast'
@@ -11,7 +11,10 @@ export default function Navbar() {
   const navigate = useNavigate()
   const [showSignIn, setShowSignIn] = useState(false)
   const [remember, setRemember] = useState(false)
+  const [signingIn, setSigningIn] = useState(false)
+  const [slowWarn, setSlowWarn] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const slowTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isActive = (path: string) =>
     location.pathname === path
@@ -35,8 +38,20 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  useEffect(() => () => { if (slowTimer.current) clearTimeout(slowTimer.current) }, [])
+
   const BASE = import.meta.env.VITE_API_URL ?? ''
   const githubUrl = `${BASE}/api/auth/github?remember=${remember ? '1' : '0'}`
+
+  const handleSignIn = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    setSigningIn(true)
+    setSlowWarn(false)
+    // After 4s show the "server waking up" hint
+    slowTimer.current = setTimeout(() => setSlowWarn(true), 4000)
+    // Small delay so spinner renders before navigation
+    setTimeout(() => { window.location.href = githubUrl }, 80)
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-brand-surface/95 backdrop-blur-sm border-b border-brand-border">
@@ -72,21 +87,13 @@ export default function Navbar() {
                 to="/dashboard"
                 className="hidden sm:flex items-center gap-1.5 text-sm text-brand-secondary hover:text-brand-text px-3 py-1.5 rounded-md hover:bg-brand-surface-2 transition-colors"
               >
-                <img
-                  src={user.avatar}
-                  alt={user.username}
-                  className="w-5 h-5 rounded-full"
-                />
+                <img src={user.avatar} alt={user.username} className="w-5 h-5 rounded-full" />
                 {user.username}
               </Link>
               <Link to="/dashboard" className="sm:hidden btn-ghost p-2">
                 <LayoutDashboard size={16} />
               </Link>
-              <button
-                onClick={handleLogout}
-                title="Sign out"
-                className="btn-ghost p-2 hover:text-red-500"
-              >
+              <button onClick={handleLogout} title="Sign out" className="btn-ghost p-2 hover:text-red-500">
                 <LogOut size={15} />
               </button>
             </div>
@@ -98,21 +105,16 @@ export default function Navbar() {
               >
                 <Github size={14} />
                 Sign in
-                <ChevronDown
-                  size={12}
-                  className={`ml-0.5 transition-transform duration-200 ${showSignIn ? 'rotate-180' : ''}`}
-                />
+                <ChevronDown size={12} className={`ml-0.5 transition-transform duration-200 ${showSignIn ? 'rotate-180' : ''}`} />
               </button>
 
               {showSignIn && (
-                <div className="absolute right-0 top-[calc(100%+6px)] w-72 card shadow-lg shadow-black/8 p-5 z-50 animate-fade-up">
+                <div className="absolute right-0 top-[calc(100%+6px)] w-72 card shadow-lg shadow-black/20 p-5 z-50 animate-fade-up">
                   <p className="font-semibold text-brand-text text-sm mb-0.5">Sign in</p>
-                  <p className="text-xs text-brand-muted mb-4">
-                    Reviews are saved to your account.
-                  </p>
+                  <p className="text-xs text-brand-muted mb-4">Reviews are saved to your account.</p>
 
                   {/* Remember me */}
-                  <label className="flex items-center gap-3 cursor-pointer mb-4 select-none group">
+                  <label className="flex items-center gap-3 cursor-pointer mb-4 select-none">
                     <button
                       type="button"
                       role="switch"
@@ -127,22 +129,32 @@ export default function Navbar() {
                       }`} />
                     </button>
                     <div>
-                      <p className="text-sm text-brand-text font-medium leading-none mb-0.5">
-                        Remember me
-                      </p>
+                      <p className="text-sm text-brand-text font-medium leading-none mb-0.5">Remember me</p>
                       <p className="text-xs text-brand-muted">
                         {remember ? 'Stay signed in for 30 days' : 'Session only · 7 days'}
                       </p>
                     </div>
                   </label>
 
+                  {/* GitHub sign-in button */}
                   <a
                     href={githubUrl}
-                    className="btn-primary w-full justify-center"
+                    onClick={handleSignIn}
+                    className={`btn-primary w-full justify-center ${signingIn ? 'opacity-75 pointer-events-none' : ''}`}
                   >
-                    <Github size={15} />
-                    Continue with GitHub
+                    {signingIn
+                      ? <Loader2 size={15} className="animate-spin" />
+                      : <Github size={15} />
+                    }
+                    {signingIn ? 'Connecting…' : 'Continue with GitHub'}
                   </a>
+
+                  {/* Shown after 4s if still loading — explains the delay */}
+                  {signingIn && slowWarn && (
+                    <p className="text-[11px] text-brand-muted text-center mt-2.5 leading-relaxed animate-fade-in">
+                      ⏳ Server is waking up — takes ~15s on first visit
+                    </p>
+                  )}
                 </div>
               )}
             </div>

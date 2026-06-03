@@ -2,7 +2,7 @@
   "name": "codaris-ai",
   "displayName": "Codaris AI — Code Reviewer",
   "description": "Instant AI-powered code review inside VS Code. Select any code, right-click, and get security issues, quality score, and fix suggestions powered by Gemini 2.5 Flash.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "AnshKumarGupta",
   "icon": "media/icon.png",
   "engines": { "vscode": "^1.85.0" },
@@ -61,7 +61,7 @@
       "properties": {
         "codaris.apiUrl": {
           "type": "string",
-          "default": "https://codaris-ai-review.onrender.com",
+          "default": "https://codaris-api.onrender.com",
           "description": "Codaris AI API base URL"
         }
       }

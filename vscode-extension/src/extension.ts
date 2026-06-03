@@ -1,161 +1,55 @@
 import * as vscode from 'vscode'
 import { ReviewPanel } from './reviewPanel'
 import { callReviewApi, ReviewResult } from './api'
-import { reviewStore, StoredFix } from './reviewStore'
+import { reviewStore } from './reviewStore'
 import { CodarisCodeLensProvider } from './codelensProvider'
 
-// Singleton CodeLens provider so commands can trigger refresh
 const codeLensProvider = new CodarisCodeLensProvider()
 
 export function activate(context: vscode.ExtensionContext) {
 
-  // ── Register CodeLens provider for ALL languages ────────────────
+  // Register CodeLens for all files
   context.subscriptions.push(
     vscode.languages.registerCodeLensProvider({ scheme: 'file' }, codeLensProvider)
   )
 
   // ── Review Selected Code ────────────────────────────────────────
-  const reviewSelection = vscode.commands.registerCommand('codaris.reviewSelection', async () => {
-    const editor = vscode.window.activeTextEditor
-    if (!editor) { vscode.window.showErrorMessage('Codaris AI: No active editor.'); return }
-
-    const selection = editor.selection
-    const code = editor.document.getText(selection.isEmpty ? undefined : selection)
-    const language = editor.document.languageId
-
-    if (!code.trim()) {
-      vscode.window.showWarningMessage('Codaris AI: No code selected.')
-      return
-    }
-
-    await runReview(context, code, language, editor)
-  })
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codaris.reviewSelection', async () => {
+      const editor = vscode.window.activeTextEditor
+      if (!editor) { vscode.window.showErrorMessage('Codaris AI: No active editor.'); return }
+      const code = editor.document.getText(
+        editor.selection.isEmpty ? undefined : editor.selection
+      )
+      if (!code.trim()) { vscode.window.showWarningMessage('Codaris AI: No code selected.'); return }
+      await runReview(context, code, editor.document.languageId, editor)
+    })
+  )
 
   // ── Review Entire File ──────────────────────────────────────────
-  const reviewFile = vscode.commands.registerCommand('codaris.reviewFile', async () => {
-    const editor = vscode.window.activeTextEditor
-    if (!editor) { vscode.window.showErrorMessage('Codaris AI: No active editor.'); return }
-
-    const code = editor.document.getText()
-    const language = editor.document.languageId
-
-    if (!code.trim()) { vscode.window.showWarningMessage('Codaris AI: File is empty.'); return }
-
-    await runReview(context, code, language, editor)
-  })
-
-  // ── Apply a single fix ──────────────────────────────────────────
-  const applyFix = vscode.commands.registerCommand('codaris.applyFix',
-    async (uri: vscode.Uri, fix: StoredFix) => {
-      const document = await vscode.workspace.openTextDocument(uri)
-      const lineIdx = Math.max(0, fix.line - 1)
-
-      if (lineIdx >= document.lineCount) {
-        vscode.window.showWarningMessage('Codaris AI: Line not found in document.')
-        return
-      }
-
-      const currentLine = document.lineAt(lineIdx).text
-      const indent = currentLine.match(/^(\s*)/)?.[1] ?? ''
-
-      // Re-indent fix to match current line's indentation
-      const fixLines = fix.fix.split('\n')
-      const reindented = fixLines
-        .map((l, i) => i === 0 ? indent + l.trimStart() : l)
-        .join('\n')
-
-      // Show diff-style confirmation dialog
-      const choice = await vscode.window.showInformationMessage(
-        `Apply fix for: "${fix.message.slice(0, 80)}"?`,
-        {
-          modal: true,
-          detail:
-            `─── Current (line ${fix.line}) ───\n${currentLine}\n\n─── Proposed fix ───\n${reindented}`,
-        },
-        'Apply Fix',
-        'Skip'
-      )
-
-      if (choice === 'Apply Fix') {
-        const lineRange = document.lineAt(lineIdx).range
-        const edit = new vscode.WorkspaceEdit()
-        edit.replace(uri, lineRange, reindented)
-        const success = await vscode.workspace.applyEdit(edit)
-
-        if (success) {
-          reviewStore.markApplied(uri.toString(), fix.id)
-          codeLensProvider.refresh()
-          vscode.window.setStatusBarMessage('$(check) Codaris: Fix applied', 3000)
-        } else {
-          vscode.window.showErrorMessage('Codaris AI: Could not apply fix.')
-        }
-      } else {
-        // Skip — dismiss lens
-        reviewStore.markSkipped(uri.toString(), fix.id)
-        codeLensProvider.refresh()
-      }
-    }
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codaris.reviewFile', async () => {
+      const editor = vscode.window.activeTextEditor
+      if (!editor) { vscode.window.showErrorMessage('Codaris AI: No active editor.'); return }
+      const code = editor.document.getText()
+      if (!code.trim()) { vscode.window.showWarningMessage('Codaris AI: File is empty.'); return }
+      await runReview(context, code, editor.document.languageId, editor)
+    })
   )
 
-  // ── Skip a single fix ───────────────────────────────────────────
-  const skipFix = vscode.commands.registerCommand('codaris.skipFix',
-    async (uri: vscode.Uri, fix: StoredFix) => {
-      reviewStore.markSkipped(uri.toString(), fix.id)
-      codeLensProvider.refresh()
-    }
+  // ── Apply fix (CodeLens button — kept for backward compat) ──────
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codaris.applyFix', () => { /* handled via panel */ })
   )
-
-  // ── Apply ALL pending fixes ─────────────────────────────────────
-  const applyAllFixes = vscode.commands.registerCommand('codaris.applyAllFixes',
-    async (uri: vscode.Uri) => {
-      const fixes = reviewStore.getActive(uri.toString())
-      if (!fixes.length) { vscode.window.showInformationMessage('No pending fixes.'); return }
-
-      const choice = await vscode.window.showInformationMessage(
-        `Apply all ${fixes.length} AI fixes?`,
-        { modal: true, detail: fixes.map(f => `• Line ${f.line}: ${f.message.slice(0, 60)}`).join('\n') },
-        'Apply All',
-        'Review One by One',
-        'Cancel'
-      )
-
-      if (choice === 'Apply All') {
-        const document = await vscode.workspace.openTextDocument(uri)
-        const edit = new vscode.WorkspaceEdit()
-        let applied = 0
-
-        // Sort descending by line so edits don't shift line numbers
-        const sorted = [...fixes].sort((a, b) => b.line - a.line)
-
-        for (const fix of sorted) {
-          const lineIdx = Math.max(0, fix.line - 1)
-          if (lineIdx >= document.lineCount) continue
-          const currentLine = document.lineAt(lineIdx).text
-          const indent = currentLine.match(/^(\s*)/)?.[1] ?? ''
-          const fixLines = fix.fix.split('\n')
-          const reindented = fixLines.map((l, i) => i === 0 ? indent + l.trimStart() : l).join('\n')
-          edit.replace(uri, document.lineAt(lineIdx).range, reindented)
-          reviewStore.markApplied(uri.toString(), fix.id)
-          applied++
-        }
-
-        await vscode.workspace.applyEdit(edit)
-        codeLensProvider.refresh()
-        vscode.window.setStatusBarMessage(`$(check) Codaris: ${applied} fixes applied`, 4000)
-
-      } else if (choice === 'Review One by One') {
-        // Chain through each fix sequentially
-        for (const fix of fixes) {
-          await vscode.commands.executeCommand('codaris.applyFix', uri, fix)
-        }
-      }
-    }
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codaris.skipFix', () => { /* handled via panel */ })
   )
-
-  context.subscriptions.push(reviewSelection, reviewFile, applyFix, skipFix, applyAllFixes)
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codaris.applyAllFixes', () => { /* handled via panel */ })
+  )
 }
 
-// ── Run a review ───────────────────────────────────────────────────────────────
+// ── Run a review ────────────────────────────────────────────────────────────
 async function runReview(
   context: vscode.ExtensionContext,
   code: string,
@@ -172,25 +66,31 @@ async function runReview(
     const result = await callReviewApi(apiUrl, code, language)
     panel.showResult(result)
 
-    // Store fixes and add CodeLens to the editor
     const uri = editor.document.uri.toString()
-    reviewStore.setFixes(uri, result.issues)
+
+    // Enrich issues with current line text so panel can show diff
+    const enriched = result.issues.map(issue => ({
+      ...issue,
+      currentCode: issue.line
+        ? editor.document.lineAt(Math.max(0, issue.line - 1)).text.trim()
+        : '',
+    }))
+
+    reviewStore.setFixes(uri, enriched as any)
     codeLensProvider.refresh()
 
-    const fixCount = reviewStore.getActive(uri).length
-    if (fixCount > 0) {
-      const action = await vscode.window.showInformationMessage(
-        `Codaris AI found ${fixCount} auto-fixable issue${fixCount > 1 ? 's' : ''}.`,
-        'Apply All Fixes',
-        'Review One by One'
-      )
-      if (action === 'Apply All Fixes') {
-        await vscode.commands.executeCommand('codaris.applyAllFixes', editor.document.uri)
-      } else if (action === 'Review One by One') {
-        const fixes = reviewStore.getActive(uri)
-        for (const fix of fixes) {
-          await vscode.commands.executeCommand('codaris.applyFix', editor.document.uri, fix)
-        }
+    // Push initial state to panel
+    pushState(panel, uri)
+
+    // Wire panel messages → commands
+    panel.onMessage = async (msg) => {
+      const m = msg as { command: string }
+      switch (m.command) {
+        case 'applyFix':   await handleApply(panel, editor); break
+        case 'skipFix':    handleSkip(panel, editor); break
+        case 'undoFix':    await handleUndo(panel, editor); break
+        case 'nextFix':    reviewStore.next(uri); pushState(panel, uri); codeLensProvider.refresh(); break
+        case 'prevFix':    reviewStore.prev(uri); pushState(panel, uri); codeLensProvider.refresh(); break
       }
     }
 
@@ -198,6 +98,82 @@ async function runReview(
     panel.showError(err?.message ?? 'Unknown error')
     vscode.window.showErrorMessage(`Codaris AI: ${err?.message ?? 'Review failed'}`)
   }
+}
+
+// ── Push current suggestion state to the panel ──────────────────────────────
+function pushState(panel: ReviewPanel, uri: string) {
+  panel.updateSuggestions(reviewStore.getState(uri))
+}
+
+// ── Apply current fix ────────────────────────────────────────────────────────
+async function handleApply(panel: ReviewPanel, editor: vscode.TextEditor) {
+  const uri   = editor.document.uri.toString()
+  const state = reviewStore.getState(uri)
+  const fix   = state.fix
+  if (!fix) return
+
+  const lineIdx = Math.max(0, fix.line - 1)
+  const doc     = editor.document
+  if (lineIdx >= doc.lineCount) return
+
+  const currentLine   = doc.lineAt(lineIdx).text
+  const indent        = currentLine.match(/^(\s*)/)?.[1] ?? ''
+  const fixLines      = fix.fix.split('\n')
+  const reindented    = fixLines.map((l, i) => i === 0 ? indent + l.trimStart() : l).join('\n')
+  const originalText  = currentLine
+
+  const edit = new vscode.WorkspaceEdit()
+  edit.replace(editor.document.uri, doc.lineAt(lineIdx).range, reindented)
+  const ok = await vscode.workspace.applyEdit(edit)
+
+  if (ok) {
+    reviewStore.markApplied(uri, fix.id, lineIdx, originalText)
+    codeLensProvider.refresh()
+    vscode.window.setStatusBarMessage('$(check) Codaris: Fix applied', 3000)
+  } else {
+    vscode.window.showErrorMessage('Codaris AI: Could not apply fix.')
+  }
+
+  pushState(panel, uri)
+}
+
+// ── Skip current fix ─────────────────────────────────────────────────────────
+function handleSkip(panel: ReviewPanel, editor: vscode.TextEditor) {
+  const uri   = editor.document.uri.toString()
+  const state = reviewStore.getState(uri)
+  const fix   = state.fix
+  if (fix) {
+    reviewStore.markSkipped(uri, fix.id)
+    codeLensProvider.refresh()
+  }
+  pushState(panel, uri)
+}
+
+// ── Undo last applied fix ────────────────────────────────────────────────────
+async function handleUndo(panel: ReviewPanel, editor: vscode.TextEditor) {
+  const uri   = editor.document.uri.toString()
+  const entry = reviewStore.popUndo(uri)
+  if (!entry) { vscode.window.showInformationMessage('Nothing to undo.'); return }
+
+  const doc = editor.document
+  if (entry.lineIdx >= doc.lineCount) return
+
+  const edit = new vscode.WorkspaceEdit()
+  edit.replace(editor.document.uri, doc.lineAt(entry.lineIdx).range, entry.original)
+  const ok = await vscode.workspace.applyEdit(edit)
+
+  if (ok) {
+    // Re-activate that fix in the store by clearing its applied flag
+    const fixes = (reviewStore as any).fixes?.get(uri) as Array<any> | undefined
+    if (fixes) {
+      const match = fixes.find((f: any) => f.applied && f.line === entry.lineIdx + 1)
+      if (match) { match.applied = false }
+    }
+    codeLensProvider.refresh()
+    vscode.window.setStatusBarMessage('$(discard) Codaris: Fix undone', 3000)
+  }
+
+  pushState(panel, uri)
 }
 
 export function deactivate() {}

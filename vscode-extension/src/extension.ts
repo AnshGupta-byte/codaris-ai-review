@@ -64,7 +64,6 @@ async function runReview(
       ?? 'https://codaris-api.onrender.com'
 
     const result = await callReviewApi(apiUrl, code, language)
-    panel.showResult(result)
 
     const uri = editor.document.uri.toString()
 
@@ -79,8 +78,9 @@ async function runReview(
     reviewStore.setFixes(uri, enriched as any)
     codeLensProvider.refresh()
 
-    // Push initial state to panel
-    pushState(panel, uri)
+    // Get state BEFORE showResult so we can embed it in the HTML (no race condition)
+    const initialState = reviewStore.getState(uri)
+    panel.showResult(result, initialState)
 
     // Wire panel messages → commands
     panel.onMessage = async (msg) => {

@@ -53,7 +53,9 @@ export class ReviewPanel {
   }
 
   public showLoading() { this._panel.webview.html = getLoadingHtml() }
-  public showResult(review: ReviewResult) { this._panel.webview.html = getResultHtml(review) }
+  public showResult(review: ReviewResult, initialState?: SuggestionState) {
+    this._panel.webview.html = getResultHtml(review, initialState)
+  }
   public showError(message: string) { this._panel.webview.html = getErrorHtml(message) }
 
   public dispose() {
@@ -176,7 +178,7 @@ function getErrorHtml(message: string): string {
   </body></html>`
 }
 
-function getResultHtml(review: ReviewResult): string {
+function getResultHtml(review: ReviewResult, initialState?: SuggestionState): string {
   const color = scoreColor(review.score)
   const label = scoreLabel(review.score)
 
@@ -197,6 +199,9 @@ function getResultHtml(review: ReviewResult): string {
   const suggestionsHtml = review.overallSuggestions.map(s =>
     `<div class="recommendation"><span>💡</span><span>${escHtml(s)}</span></div>`).join('')
 
+  // Embed initial state as JSON so it renders immediately — no postMessage race
+  const initialJson = JSON.stringify(initialState ?? null)
+
   return `<!DOCTYPE html>
   <html><head><meta charset="UTF-8">${baseStyles()}</head>
   <body>
@@ -205,7 +210,11 @@ function getResultHtml(review: ReviewResult): string {
     function jumpToLine(line){ vscode.postMessage({command:'jumpToLine',line}) }
     function send(cmd){ vscode.postMessage({command:cmd}) }
 
-    // Listen for suggestion state updates from extension
+    // Render initial state immediately when DOM is ready
+    const _initial = ${initialJson};
+    document.addEventListener('DOMContentLoaded', () => { if(_initial) renderSuggestions(_initial) })
+
+    // Also handle live updates from extension (apply/skip/nav)
     window.addEventListener('message', e => {
       const msg = e.data
       if(msg.command === 'updateSuggestions') renderSuggestions(msg.state)

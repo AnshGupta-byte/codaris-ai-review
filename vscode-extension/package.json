@@ -2,7 +2,7 @@
   "name": "codaris-ai",
   "displayName": "Codaris AI — Code Reviewer",
   "description": "Instant AI-powered code review inside VS Code. Select any code, right-click, and get security issues, quality score, and fix suggestions powered by Gemini 2.5 Flash.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "AnshKumarGupta",
   "icon": "media/icon.png",
   "engines": { "vscode": "^1.85.0" },
@@ -25,6 +25,21 @@
       {
         "command": "codaris.reviewFile",
         "title": "Codaris AI: Review Entire File",
+        "category": "Codaris"
+      },
+      {
+        "command": "codaris.applyFix",
+        "title": "Codaris AI: Apply Fix",
+        "category": "Codaris"
+      },
+      {
+        "command": "codaris.skipFix",
+        "title": "Codaris AI: Skip Fix",
+        "category": "Codaris"
+      },
+      {
+        "command": "codaris.applyAllFixes",
+        "title": "Codaris AI: Apply All Fixes",
         "category": "Codaris"
       }
     ],

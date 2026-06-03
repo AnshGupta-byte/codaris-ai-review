@@ -1,0 +1,83 @@
+{
+  "name": "codaris-ai",
+  "displayName": "Codaris AI — Code Reviewer",
+  "description": "Instant AI-powered code review inside VS Code. Select any code, right-click, and get security issues, quality score, and fix suggestions powered by Gemini 2.5 Flash.",
+  "version": "1.0.0",
+  "publisher": "AnshKumarGupta",
+  "icon": "media/icon.png",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other", "Linters"],
+  "keywords": ["ai", "code review", "gemini", "security", "code quality"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnshGupta-byte/codaris-ai-review"
+  },
+  "homepage": "https://codaris-ai-review.vercel.app",
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codaris.reviewSelection",
+        "title": "Codaris AI: Review Selected Code",
+        "category": "Codaris"
+      },
+      {
+        "command": "codaris.reviewFile",
+        "title": "Codaris AI: Review Entire File",
+        "category": "Codaris"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "codaris.reviewSelection",
+          "when": "editorHasSelection",
+          "group": "1_modification@99"
+        },
+        {
+          "command": "codaris.reviewFile",
+          "when": "!editorHasSelection",
+          "group": "1_modification@99"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "codaris.reviewSelection",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "codaris.reviewFile",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus && !editorHasSelection"
+      }
+    ],
+    "configuration": {
+      "title": "Codaris AI",
+      "properties": {
+        "codaris.apiUrl": {
+          "type": "string",
+          "default": "https://codaris-ai-review.onrender.com",
+          "description": "Codaris AI API base URL"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.22.0"
+  }
+}
